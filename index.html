@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <title></title>
+  <style>
+    .result table,
+    tr,
+    td {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+
+<body>
+  <br>
+  <div id="filter">
+    <form id="flr" method="POST">
+      <input type="hidden" name="sort" id="sort" value="price_for_sort">
+      <input type="hidden" name="sortorder" id="sortorder" value="ASC">
+      <label for=" typis">Тип недвижимости:</label>
+      <select name="typis" id="typis" tabindex="1 ">
+        <option disabled="disabled">жилая</option> 
+        <option value="city/flats">квартиры (вторичка)</option> 
+        <option value="city/rooms">комнаты</option> 
+        <option value="city/elite">элитная недвижимость</option> 
+        <option value="city/newflats">новостройки</option> 
+        <option disabled="disabled">загородная</option> 
+        <option value="country/houses">дома</option> 
+        <option value="country/cottages">коттеджи</option> 
+        <option value="country/lands">участки</option> 
+        <option disabled="disabled">коммерческая</option> 
+        <option value="commerce/offices">офисы</option> 
+        <option value="commerce/comm_new">помещения в строящихся домах</option>
+        <option value="commerce/service">помещения в сфере услуг</option>
+        <option value="commerce/different">помещения различного назначения</option>
+        <option value="commerce/freestanding">отдельно стоящие здания</option> 
+        <option value="commerce/storage">производственно-складские помещения</option>
+        <option value="commerce/comm_lands">земельные участки</option>
+      </select>
+      <br>
+      <label for="price">Цена (рублей):</label>
+      <input type="text" name="price_from" id="price_from" tabindex="2 "> -
+      <input type="text" name="price_to" id="price_to" tabindex="3">
+      <br>
+      <label for="rooms">Комнат:</label>
+      <select name="rooms[]" id="rooms" multiple="multiple" tabindex="4">
+          <option></option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5+</option>
+      </select>
+      <br>
+      <input type="checkbox" name="only_photo" id="only_photo"><label for="only_photo">только с фото</label>
+      <br>
+      <button type="submit">Найти</button>
+      <input type="reset" value="Очистить форму">
+    </form>
+  </div>
+  <div id="data"></div>
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    const form = document.getElementById("flr");
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      if (url) {
+        axios({
+            method: 'post',
+            url: 'index.php ',
+            data: {
+              sort: document.getElementById('sort').value,
+              sortorder: document.getElementById('sortorder').value,
+              typis: document.getElementById('typis').value,
+              price_from: document.getElementById('price_from').value,
+              price_to: document.getElementById('price_to').value,
+              rooms: getRooms(document.getElementById('rooms')),
+              only_photo: getChecked(document.getElementById('only_photo')),
+            }
+          })
+          .then(response => {
+            document.getElementById('data').innerHTML = response.data
+            console.log('response ' + response.data)
+            console.log(url)
+          })
+          .then(uri => console.log(uri))
+          .catch(error => console.log(error))
+      }
+    });
+
+    function getRooms(str) {
+      let sel = [];
+      for (let i = 1; i < str.options.length; i++) {
+        if (str.options[i].selected) sel.push(str.options[i].value);
+      }
+      return sel;
+    }
+
+    function getChecked(check) {
+      return check.checked ? 1 : 0;
+    }
+  </script>
+</body>
+
+</html>
