@@ -66,6 +66,7 @@
     const form = document.getElementById("flr");
     form.addEventListener("submit", event => {
       event.preventDefault();
+      const url = new FormData(form);
       if (url) {
         axios({
             method: 'post',
@@ -82,10 +83,7 @@
           })
           .then(response => {
             document.getElementById('data').innerHTML = response.data
-            console.log('response ' + response.data)
-            console.log(url)
           })
-          .then(uri => console.log(uri))
           .catch(error => console.log(error))
       }
     });
